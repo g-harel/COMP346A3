@@ -23,18 +23,20 @@ public class Philosopher extends BaseThread
 	 */
 	public void eat()
 	{
-		try
-		{
-			// ...
-			sleep((long)(Math.random() * TIME_TO_WASTE));
-			// ...
-		}
-		catch(InterruptedException e)
-		{
-			System.err.println("Philosopher.eat():");
-			DiningPhilosophers.reportException(e);
-			System.exit(1);
-		}
+    try
+    {
+      System.out.println("Philosopher " + getTID()+ " has started eating.");
+      yield();
+      sleep((long)(Math.random() * TIME_TO_WASTE));
+      yield();
+      System.out.println("Philosopher " + getTID()+ " is done eating.");
+    }
+    catch(InterruptedException e)
+    {
+      System.err.println("Philosopher.eat():");
+      DiningPhilosophers.reportException(e);
+      System.exit(1);
+    }
 	}
 
 	/**
@@ -47,7 +49,20 @@ public class Philosopher extends BaseThread
 	 */
 	public void think()
 	{
-		// ...
+      try
+      {
+          System.out.println("Philosopher " + getTID()+ " has started thinking.");
+          yield();
+          sleep((long)(Math.random() * TIME_TO_WASTE));
+          yield();
+          System.out.println("Philosopher " + getTID()+ " is done thinking.");
+      }
+      catch(InterruptedException e)
+      {
+          System.err.println("Philosopher.think():");
+          DiningPhilosophers.reportException(e);
+          System.exit(1);
+      }
 	}
 
 	/**
@@ -59,12 +74,12 @@ public class Philosopher extends BaseThread
 	 * - The print that they are done talking.
 	 */
 	public void talk()
-	{
-		// ...
-
-		saySomething();
-
-		// ...
+  {
+      System.out.println("Philosopher " + iTID + " has started talking.");
+      yield();
+      saySomething();
+      yield();
+      System.out.println("Philosopher " + iTID + " is done talking.");
 	}
 
 	/**
@@ -83,15 +98,14 @@ public class Philosopher extends BaseThread
 			think();
 
 			/*
-			 * TODO:
 			 * A decision is made at random whether this particular
 			 * philosopher is about to say something terribly useful.
 			 */
-			if(true == false)
+			if(Math.random() < 0.5)
 			{
-				// Some monitor ops down here...
+        DiningPhilosophers.soMonitor.requestTalk();
 				talk();
-				// ...
+        DiningPhilosophers.soMonitor.endTalk();
 			}
 
 			yield();
