@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 /**
  * Class DiningPhilosophers
  * The main starter.
@@ -46,7 +48,18 @@ public class DiningPhilosophers
 			 * Should be settable from the command line
 			 * or the default if no arguments supplied.
 			 */
-			int iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+        Scanner keyboard = new Scanner(System.in);
+        System.out.print("enter the number of philosophers: ");
+        int iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+        try {
+            iPhilosophers = Integer.parseInt(keyboard.nextLine());
+        } catch (Exception e) {
+            System.out.println("invalid number, will use default (" + DEFAULT_NUMBER_OF_PHILOSOPHERS + ")");
+        }
+			  if (iPhilosophers < 1) {
+            System.out.println("negative number, will use default (" + DEFAULT_NUMBER_OF_PHILOSOPHERS + ")");
+			      iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
+        }
 
 			// Make the monitor aware of how many philosophers there are
 			soMonitor = new Monitor(iPhilosophers);
