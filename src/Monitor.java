@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Class Monitor
  * To synchronize dining philosophers.
@@ -6,11 +8,9 @@
  */
 public class Monitor
 {
-	/*
-	 * ------------
-	 * Data members
-	 * ------------
-	 */
+
+	boolean[] chopsticks;
+	boolean someoneIsTalking = false;
 
 
 	/**
@@ -19,6 +19,8 @@ public class Monitor
 	public Monitor(int piNumberOfPhilosophers)
 	{
 		// TODO: set appropriate number of chopsticks based on the # of philosophers
+		this.chopsticks = new boolean[piNumberOfPhilosophers];
+		Arrays.fill(chopsticks, Boolean.TRUE);
 	}
 
 	/*
@@ -33,7 +35,18 @@ public class Monitor
 	 */
 	public synchronized void pickUp(final int piTID)
 	{
-		// ...
+		// if both chopsticks are available
+      int index = piTID-1;
+		while (!chopsticks[index] || !chopsticks[piTID%(chopsticks.length - 1)]) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+      chopsticks[index] = false;
+      chopsticks[piTID%(chopsticks.length - 1)] = false;
+			return;
 	}
 
 	/**
@@ -42,7 +55,10 @@ public class Monitor
 	 */
 	public synchronized void putDown(final int piTID)
 	{
-		// ...
+	    int index = piTID-1;
+      chopsticks[index] = true;
+      chopsticks[piTID%(chopsticks.length - 1)] = true;
+      notifyAll();
 	}
 
 	/**
@@ -51,7 +67,15 @@ public class Monitor
 	 */
 	public synchronized void requestTalk()
 	{
-		// ...
+		while (someoneIsTalking) {
+        try {
+            wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+      someoneIsTalking = true;
+      return;
 	}
 
 	/**
@@ -60,7 +84,8 @@ public class Monitor
 	 */
 	public synchronized void endTalk()
 	{
-		// ...
+		someoneIsTalking = false;
+		notifyAll();
 	}
 }
 
